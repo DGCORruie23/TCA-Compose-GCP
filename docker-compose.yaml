@@ -1,0 +1,36 @@
+services:
+  web:
+    container_name: TCAapp
+    restart: always
+    build: ./TCA
+    #command: gunicorn tablero_control.wsgi:application --bind 0.0.0.0:8000 --reload
+    command: python manage.py runserver 0.0.0.0:8000
+    expose:
+      - 8000
+    env_file:
+      - .env.dev
+    links:
+      - db
+    volumes: 
+      - ./TCA/data:/src/TCA/data
+      - ./static_volume:/src/TCA/data/static
+
+  db:
+    container_name: databasePG
+    restart: always
+    image: postgres:16.4-alpine
+    shm_size: 128mb
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    env_file:
+      - .env.db
+
+  nginx:
+    container_name: TcaNginx
+    build: ./nginx
+    ports:
+      - 80:80
+    links:
+      - web
+    volumes:
+      - ./static_volume:/src/TCA/data/static

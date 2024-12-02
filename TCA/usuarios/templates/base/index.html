@@ -1,0 +1,32 @@
+{% extends "base/base.html" %}
+
+{% load static %}
+
+{% block title %}Bienvenidos{% endblock title %}
+
+{% block styles %}
+
+<link rel="stylesheet" href="{% static 'css/index.css' %}">
+
+{% endblock styles %}
+
+{% block content %}
+<div class="welcome-container max-w-4xl">
+    <div class="welcome-header">Bienvenidos</div>
+
+    <div class="welcome-image">
+        <img src="{% static 'imgs/inami.png' %}" alt="Logo INAMI" />
+    </div>
+
+    <div class="welcome-text">
+        Utiliza el <span class="highlight">Tablero de Control de Acuerdos (TCA)</span> para el registro del seguimiento a los acuerdos generados en las Visitas de Supervisión y Evaluación a las Oficinas de Representación del Instituto Nacional de Migración.
+    </div>
+
+    <div class="footer-text">
+        Dirección General de Coordinación de Oficinas de Representación
+    </div>
+</div>
+
+<p class="mt-12 text-2xl text-center font-bold text-rojo_claro">¡Acuerdos puntuales, verificados y accesibles!</p>
+
+{% endblock content %}
