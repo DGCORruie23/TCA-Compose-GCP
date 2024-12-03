@@ -15,6 +15,9 @@ from pathlib import Path
 import os
 import io
 
+import mimetypes
+mimetypes.add_type("text/css", ".css", True)
+
 # from google.auth import default
 # import environ
 
