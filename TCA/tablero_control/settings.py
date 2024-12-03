@@ -40,6 +40,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY', default='django-insecure-v1!($nd@2=4ye
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get("DEBUG", default=1))
 
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
+
 # env = environ.Env(DEBUG=(bool, True))
 
 # GS_PROJECT_ID = 'tca-dgcor-2024'
