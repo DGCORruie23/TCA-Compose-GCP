@@ -24,6 +24,10 @@ ENV LANGUAGE en_US.UTF-8
 #Copiar el proyecto entero
 COPY . /src/TCA
 
+RUN mkdir /src/TCA/data/static
+
+RUN mkdir /src/TCA/data/media
+
 #Copiar los requisitos del sistema
 # COPY ./req.txt ./
 #instalar dependencias 

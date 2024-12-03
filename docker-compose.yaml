@@ -12,7 +12,7 @@ services:
     links:
       - db
     volumes: 
-      - ./TCA/data:/src/TCA/data
+      - ./media_volume:/src/TCA/data/media
       - ./static_volume:/src/TCA/data/static
 
   db:
