@@ -2,4 +2,5 @@ postgres_data/
 .env.db
 .env.dev
 static_volume/
+media_volume/
 TCA/data/

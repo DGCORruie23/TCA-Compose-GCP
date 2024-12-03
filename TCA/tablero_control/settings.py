@@ -232,8 +232,12 @@ USE_TZ = True
 BASE_DIR_ROOT = os.environ.get('BASE_DIR_ROOT', default=BASE_DIR)
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR_ROOT, os.path.join("data", "static"))
+STATIC_ROOT = os.path.join(BASE_DIR_ROOT,'data/static')
 # STATICFILES_DIRS = [os.path.join(BASE_DIR_ROOT, 'static')]
+
+# Archivos de medios
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR_ROOT, 'data/media')
 
 # Archivos de medios
 # MEDIA_URL = '/media/'
@@ -246,9 +250,7 @@ STATIC_ROOT = os.path.join(BASE_DIR_ROOT, os.path.join("data", "static"))
 
 # STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
-# Archivos de medios
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR_ROOT, os.path.join("data", "media"))
+
 # MEDIA_URL = 'https://storage.googleapis.com/{}/media'.format(GS_BUCKET_NAME)
 # MEDIA_ROOT = "media/"
 
