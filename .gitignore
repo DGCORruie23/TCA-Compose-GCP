@@ -4,3 +4,5 @@ postgres_data/
 static_volume/
 media_volume/
 TCA/data/
+certbot/conf/
+certbot/www/
