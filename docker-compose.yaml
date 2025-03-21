@@ -11,7 +11,7 @@ services:
       - .env.dev
     links:
       - db
-    volumes: 
+    volumes:
       - ./media_volume:/src/TCA/data/media
       - ./static_volume:/src/TCA/data/static
 
@@ -30,20 +30,9 @@ services:
     build: ./nginx
     ports:
       - 80:80
-      # - 443:443
+      - 443:443
     links:
       - web
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./static_volume:/src/TCA/data/static
       - ./media_volume:/src/TCA/data/media
-      # - ./certbot/conf:/etc/letsencrypt
-      # - ./certbot/www:/var/www/certbot
-
-  # certbot:
-  #   image: certbot/certbot
-  #   container_name: TCAcertbot
-  #   volumes:
-  #     - ./certbot/conf:/etc/letsencrypt
-  #     - ./certbot/www:/var/www/certbot
-  #   command: certonly --webroot -w /var/www/certbot --force-renewal --email dgcor.rui23@gmail.com -d acuerdos.dgcor.com --agree-tos
