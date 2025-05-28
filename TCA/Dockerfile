@@ -12,7 +12,7 @@ ENV PYTHONUNBUFFERED 1
 RUN pip install --upgrade pip
 
 #actualizar e instalar mysql
-RUN apt-get update && apt-get install -y gcc libpq-dev python3-dev musl-dev postgresql-client
+RUN apt-get update && apt-get install -y gcc libpq-dev python3-dev musl-dev postgresql-client python-gi-dev gtk+3
 # RUN apt-get update && apt-get install -y gcc libpq-dev python3-dev musl-dev libmariadb-dev mariadb-client 
 
 
@@ -24,7 +24,7 @@ ENV LANGUAGE en_US.UTF-8
 #Copiar el proyecto entero
 COPY . /src/TCA
 
-RUN mkdir /src/TCA/data
+# RUN mkdir /src/TCA/data
 
 RUN mkdir /src/TCA/data/static
 

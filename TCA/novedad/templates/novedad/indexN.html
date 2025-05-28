@@ -1,0 +1,32 @@
+{% extends "base/base.html" %}
+
+{% load static %}
+
+{% block title %}Novedades{% endblock title %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock styles %}
+
+{% block content %}
+
+<div class="flex flex-col content-center px-5 py-2">
+
+    <form action="{% url 'novedades' %}" method="post" enctype="multipart/form-data"
+        class="flex flex-col items-center justify-center">{% csrf_token %}
+        {% comment %} <form action="" method="post" enctype="multipart/form-data">{% csrf_token %} {% endcomment %}
+            <p class="py-3">
+                Seleccionar la fecha para visualizar
+            </p>
+            <p>
+                {{form.fechaDescarga}}
+            </p>
+
+            <p class="py-4">
+                <input class="py-2 px-2 bg-inm-verde-100 hover:bg-inm-verde-200 rounded-xl text-white" type="submit"
+                    value="Visualizar Datos" />
+            </p>
+        </form>
+</div>
+
+{% endblock content %}

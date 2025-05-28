@@ -6,3 +6,4 @@ media_volume/
 TCA/data/
 certbot/conf/
 certbot/www/
+Dockerfile

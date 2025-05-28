@@ -90,6 +90,7 @@ INSTALLED_APPS = [
     'dashboard',
     'tailwind',
     'estadistica',
+    'novedad',
 
 ]
 

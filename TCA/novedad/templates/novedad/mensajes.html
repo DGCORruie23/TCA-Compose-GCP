@@ -1,0 +1,262 @@
+{% extends "base/base.html" %} {% load static %} {% block title %}Novedades por
+Día{% endblock title %} {% block styles %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
+<style>
+  /* Estilo del modal */
+  .modal {
+    display: none; /* oculto por defecto */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+  }
+  .close-btn {
+    float: right;
+    cursor: pointer;
+    font-size: 20px;
+  }
+
+  .msg_container {
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+  }
+
+  .msg {
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    position: relative;
+    padding-left: 15px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  .close-buttonX1 {
+    position: absolute; /* Posiciona el botón respecto al contenedor */
+    top: 10px; /* Ajusta la posición vertical en la parte superior */
+    right: 10px; /* Ajusta la posición horizontal en la esquina derecha */
+    background: none; /* Elimina el fondo del botón */
+    border: none; /* Elimina el borde */
+    font-size: 24px; /* Aumenta el tamaño de la "X" */
+    cursor: pointer; /* Cambia el cursor cuando pases sobre el botón */
+    color: #ff0000; /* Cambia el color de la "X" */
+  }
+
+  .edit-buttonX1 {
+    position: absolute; /* Posiciona el botón respecto al contenedor */
+    top: 10px; /* Ajusta la posición vertical en la parte superior */
+    right: 50px; /* Ajusta la posición horizontal en la esquina derecha */
+    background: none; /* Elimina el fondo del botón */
+    border: none; /* Elimina el borde */
+    font-size: 24px; /* Aumenta el tamaño de la "X" */
+    cursor: pointer; /* Cambia el cursor cuando pases sobre el botón */
+    color: #ff0000; /* Cambia el color de la "X" */
+  }
+
+  .close-buttonX1:hover {
+    color: #cc0000; /* Cambia el color al hacer hover */
+  }
+
+  .form-wrapper {
+    display: flex;
+    justify-content: center; /* centra horizontalmente */
+    /* opcional: para que no ocupe toda la pantalla */
+    padding: 1rem;
+  }
+  .form-wrapper form {
+    /* si quieres un ancho fijo o máximo */
+    width: 100%;
+    max-width: 400px;
+  }
+  .form-group {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch; /* hace que labels + inputs llenen el ancho del form */
+  }
+
+</style>
+{% endblock styles %} {% block content %}
+
+<div class="msg_container">
+  {% for mensaje in mensajes %}
+  <div class="msg">
+    <strong>INM - OR {{ mensaje.get_oficina_display }}</strong>
+    <time>{{ mensaje.fecha }}</time><br />
+    <strong>TITULO DE LA NOVEDAD:</strong> {{ mensaje.titulo }}<br />
+    <strong>TIPO DE EVENTO:</strong> {{ mensaje.evento.tipo_evento }}<br />
+    <strong>LUGAR DEL INCIDENTE O EVENTO:</strong> {{ mensaje.lugar }}
+    <br /><br />
+    <strong>DESCRIPCION </strong>
+    <p>{{ mensaje.descripcion }}</p>
+    <br />
+    <strong>No. DE MIGRANTES INVOLUCRADOS: </strong> {{ mensaje.no_migrantes}}<br/>
+    <strong>NACIONALIDADES:</strong>{{ mensaje.nacionalidades }}<br /><br />
+
+    <strong>INSTANCIAS DE SEGURIDAD PARTICIPANTES:</strong><br />
+    {% for fruta in mensaje.autoridades.all %}
+    <li>{{ fruta.nombre }}</li>
+    {% empty %}
+    <li>No hubo autoridades involucradas</li>
+    {% endfor %} {% if mensaje.archivo %}
+    <p><a href="{{ mensaje.archivoN.url }}">Archivo adjunto</a></p>
+    {% endif %} {% comment %}
+    <h1>{{ dataU.tipo }}</h1>
+    {% endcomment %} {% if dataU.tipo == "1" %}
+    <div id="confirmDeleteModal{{ forloop.counter }}" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <p>¿Está seguro que desea eliminar este mensaje?</p>
+        <form
+          id="eliminarForm{{ forloop.counter }}"
+          method="post"
+          action="{% url 'eliminar_novedad' mensaje.idNovedad %}"
+        >
+          {% csrf_token %}
+          <button
+            type="submit"
+            class="action-button bg-inm-rojo-200 hover:bg-inm-rojo-300 rounded-xl text-white"
+          >
+            Eliminar
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div id="confirmEditModal{{ forloop.counter }}" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <p>¿Desea editar este mensaje?</p>
+        <form
+          id="editarForm{{ forloop.counter }}"
+          method="get"
+          action="{% url 'editar_novedad' mensaje.idNovedad %}"
+        >
+          {% csrf_token %}
+          <button
+            type="submit"
+            class="action-button bg-inm-rojo-200 hover:bg-inm-rojo-300 rounded-xl text-white"
+          >
+            Editar
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <button
+      onclick="document.getElementById('confirmDeleteModal{{ forloop.counter }}').style.display='block'"
+      class="close-buttonX1 py-2 px-3 bg-inm-rojo-300 hover:bg-inm-rojo-100 hover:text-inm-marron-100 rounded-xl text-white text-sm"
+    >
+      X
+    </button>
+    <button
+      onclick="document.getElementById('confirmEditModal{{ forloop.counter }}').style.display='block'"
+      class="edit-buttonX1 py-2 px-3 bg-inm-verde-200 hover:bg-inm-marron-100 hover:text-inm-marron-100 rounded-xl text-white text-sm"
+    >
+      ✏️
+    </button>
+    <script>
+      var closeButtons = document.getElementsByClassName("close");
+      for (var i = 0; i < closeButtons.length; i++) {
+        closeButtons[i].onclick = function () {
+          var modal = this.parentElement.parentElement;
+          modal.style.display = "none";
+        };
+      }
+
+      var editButtons = document.getElementsByClassName("editM");
+      for (var i = 0; i < editButtons.length; i++) {
+        editButtons[i].onclick = function () {
+          var modal = this.parentElement.parentElement;
+          modal.style.display = "none";
+        };
+      }
+    </script>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+
+
+{% if fecha == fecha_ref %}
+<button
+  onclick="abrirModal()"
+  class="bg-inm-verde-100 text-white px-6 py-3 rounded-xl hover:bg-inm-verde-200">
+  Agregar Incidencia 🧺
+</button>
+{% endif %} 
+
+<button
+  onclick="abrirModalR()"
+  class="bg-inm-marron-200 text-white px-6 py-3 rounded-xl hover:bg-inm-marron-100">
+  Generar Reporte
+</button>
+
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="cerrarModal()">✖</span>
+    <h2>Reporte de Incidencia</h2>
+    <div class="form-wrapper">
+      <form method="post">
+        {% csrf_token %} {% comment %} {{ formNov.as_p }} {% endcomment %} 
+        {% for field in formNov %}
+        <div class="form-group">
+          {{ field.label_tag }}
+          {{ field }} {% if field.help_text %}
+          <small class="help-text">{{ field.help_text }}</small>
+          {% endif %} {{ field.errors }}
+        </div>
+        {% endfor %}
+        <button class="bg-inm-verde-200 hover:bg-inm-marron-100" type="submit">Guardar</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="modal-reportes" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="cerrarModal()">✖</span>
+      <h2>Seleccione Reporte</h2>
+      <div class="form-wrapper">
+        <a href="{% url 'reporteN'%}?fecha={{fecha|date:'Y/m/d'}}&tipo=M" class="py-2 px-2 mx-2 bg-inm-verde-100 hover:bg-inm-verde-200 rounded-xl text-white">MATUTINO</a>
+        <a href="{% url 'reporteN'%}?fecha={{fecha|date:'Y/m/d'}}&tipo=M" class="py-2 px-2 mx-2 bg-inm-rojo-200 hover:bg-inm-rojo-300 rounded-xl text-white">VESPERTINO</a>
+      </div>
+    </div>
+  </div>
+
+<script>
+  function abrirModal() {
+    document.getElementById("modal").style.display = "flex";
+  }
+
+  function abrirModalR() {
+    document.getElementById("modal-reportes").style.display = "flex";
+  }
+
+  function cerrarModal() {
+    document.getElementById("modal").style.display = "none";
+    document.getElementById("modal-reportes").style.display = "none";
+  }
+    
+</script>
+
+{% endblock content %}

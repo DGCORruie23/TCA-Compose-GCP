@@ -26,6 +26,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('usuarios/', include('usuarios.urls')),
@@ -50,7 +51,10 @@ urlpatterns = [
 
     path('estadistica/', include('estadistica.urls')),
 
-    path('descargas/<int:registro_id>/', vDash.descargar_archivos_acuerdo, name='archivos_acuerdo')
+    path('descargas/<int:registro_id>/', vDash.descargar_archivos_acuerdo, name='archivos_acuerdo'),
+
+    path('novedades/', include('novedad.urls'))
+    
 ]
 
 
