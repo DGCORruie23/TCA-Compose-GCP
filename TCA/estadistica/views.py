@@ -1,9 +1,11 @@
-from datetime import datetime
+from datetime import datetime, date
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from usuarios.models import Registro, Acciones, Notificacion, Area, Rubro, UsuarioP
 from django.db.models import Count, Q
 from django.db.models.functions import ExtractYear, Substr
+from django.http import HttpResponse
+import openpyxl as opxl
 
 @login_required
 def general(request):
@@ -107,3 +109,40 @@ def general(request):
 
         return render(request, "estadistica/informacion.html", context)
 
+@login_required
+def pendientes(request):
+    if(request.method == "GET"):
+
+        userDataI = UsuarioP.objects.filter(user__username=request.user).first()
+
+        registros = Registro.objects.filter(estado="1").order_by('fecha_inicio')
+
+        # if userDataI.tipo == "1":
+        #     registros = Registro.objects.all()
+        
+        workbook = opxl.Workbook()
+        worksheet = workbook.active
+            
+        for valor in registros:
+
+            oficina = valor.claveAcuerdo.split("/")
+            fecha = valor.fecha_inicio.strftime("%Y")
+            clave = valor.claveAcuerdo
+            rubro = (valor.rubro.first()).tipo
+            descripcion = (valor.accionR.first()).descripcion
+            avance = valor.porcentaje_avance
+
+            # print(f"OR:{oficina[1]} -- {fecha} -- CLAVE:{clave} -- {rubro[:5]} -- {descripcion} -- {avance}")
+            worksheet.append([oficina[1], fecha, clave, rubro, descripcion, avance])
+        
+        worksheet.append(['Numero de Acuerdos Pendientes: ', registros.count()])
+
+        response = HttpResponse(content = opxl.writer.excel.save_virtual_workbook(workbook), content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment; filename= "Acuerdos_Pendientes_a_{fecha1}.xlsx"'.format(fecha1 = date.today())
+
+        return response
+
+        # redirect("estadistica_p")
+    
+    else:
+        return render(request, "base/error404.html")

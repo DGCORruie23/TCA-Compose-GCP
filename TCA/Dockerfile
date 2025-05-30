@@ -24,7 +24,7 @@ ENV LANGUAGE en_US.UTF-8
 #Copiar el proyecto entero
 COPY . /src/TCA
 
-RUN mkdir /src/TCA/data
+# RUN mkdir /src/TCA/data
 
 RUN mkdir /src/TCA/data/static
 
