@@ -153,7 +153,7 @@
         
                             <div class="px-2 flex flex-col space-y-2">
                                 <label for="id_claveAcuerdo">Clave de Acuerdo:</label>
-                                <input name="claveAcuerdo" id="id_claveAcuerdo" type="text" class="text-center border border-gray-300 rounded-full p-2 text-12pt" placeholder="00/AREA/MES/Año">
+                                <input name="claveAcuerdo" id="id_claveAcuerdo" type="text" class="text-center border border-gray-300 rounded-full p-2 text-12pt" placeholder="00/OR/MES/Año">
                                 <!-- <textarea name="claveAcuerdo" cols="40" rows="10" required id="id_claveAcuerdo">Clave de Acuerdo</textarea> -->
                             </div>
                             
@@ -182,33 +182,28 @@
                                 <div class="flex flex-col space-y-2">
                                     <label for="id_rubro">Rubro:</label>
                                 
-                                        <select name="rubro" size="7" required id="id_rubro" multiple>
-                                            <option value="1">1, Otros Asuntos Administrativos y Mantenimientos</option>
-                                            
-                                            <option value="2">2, Otros</option>
-                                            
-                                            <option value="3">3, Acciones de Control y Verificación Migratoria</option>
-                                            
-                                            <option value="4">4, Simplificación de Tramites y Abatimiento de Rezago</option>
-                                            
-                                            <option value="5">5, Recursos Humanos y Capacitación</option>
-                                            
-                                            <option value="6">6, Bienes Muebles, Parque Vehicular e Inventarios</option>
-                                            
-                                            <option value="7">7, Archivo Migratorio</option>
-                                            
-                                            <option value="8">8, Sistemas Informaticos y Equipo</option>
-                                            
-                                            <option value="9">9, Estaciones Migratorias y Estancias Provisionales</option>
-                                            
-                                            <option value="10">10, Asuntos Jurídicos</option>
+                                        <select name="rubro" size="6" required id="id_rubro" multiple>
+                                            {% for area in registro_form.fields.rubro.queryset %}
+                                                <option value="{{ area.pk }}"
+                                                    {% if area.pk in registro_form.initial.rubro %} selected{% endif %}>
+                                                    {{ area.pk }}, {{ area.tipo }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                </div>
+                            </div>
 
-                                            <option value="11">11, Reingeniería de la Estructura Orgánica y Plazas</option>
-
-                                            <option value="12">12, Protección a NNA</option>
-
-                                            <option value="13">13, Disminución de Quejas</option>
-                                        
+                            <div class="px-2 flex-1 text-center">
+                                <div class="flex flex-col space-y-2">
+                                    <label for="id_periodo">Periodo:</label>
+                                
+                                        <select name="periodo" size="3" required id="id_periodo" multiple>
+                                            {% for areass in registro_form.fields.periodo.queryset %}
+                                                <option value="{{ areass.pk }}"
+                                                    {% if areass.pk in registro_form.initial.periodo %} selected{% endif %}>
+                                                    {{ areass.pk }}, {{ areass.desc }}
+                                                </option>
+                                            {% endfor %}
                                         </select>
                                 </div>
                             </div>
@@ -220,158 +215,26 @@
                                 <div class="px-2 flex flex-col space-y-2">
                                     <label for="id_area">OR:</label>
                                     <select name="area" size="7" required id="id_area" multiple>
-                                        <option value="1">1,OR AGS,</option>
-        
-                                        <option value="2">2,OR BC,</option>
-        
-                                        <option value="3">3,OR BCS,</option>
-        
-                                        <option value="4">4,OR CAMP,</option>
-        
-                                        <option value="5">5,OR COAH,</option>
-        
-                                        <option value="6">6,OR COL,</option>
-        
-                                        <option value="7">7,OR CHIS,</option>
-        
-                                        <option value="8">8,OR CHIH,</option>
-        
-                                        <option value="9">9,OR CDMX,</option>
-        
-                                        <option value="10">10,OR DGO,</option>
-        
-                                        <option value="11">11,OR GTO,</option>
-        
-                                        <option value="12">12,OR GRO,</option>
-        
-                                        <option value="13">13,OR HGO,</option>
-        
-                                        <option value="14">14,OR JAL,</option>
-        
-                                        <option value="15">15,OR EDOMEX,</option>
-        
-                                        <option value="16">16,OR MICH,</option>
-        
-                                        <option value="17">17,OR MOR,</option>
-        
-                                        <option value="18">18,OR NAY,</option>
-        
-                                        <option value="19">19,OR NL,</option>
-        
-                                        <option value="20">20,OR OAX,</option>
-        
-                                        <option value="21">21,OR PUE,</option>
-        
-                                        <option value="22">22,OR QRO,</option>
-        
-                                        <option value="23">23,OR QROO,</option>
-        
-                                        <option value="24">24,OR SLP,</option>
-        
-                                        <option value="25">25,OR SIN,</option>
-        
-                                        <option value="26">26,OR SON,</option>
-        
-                                        <option value="27">27,OR TAB,</option>
-        
-                                        <option value="28">28,OR TAMPS,</option>
-        
-                                        <option value="29">29,OR TLX,</option>
-        
-                                        <option value="30">30,OR VER,</option>
-        
-                                        <option value="31">31,OR YUC,</option>
-        
-                                        <option value="32">32,OR ZAC,</option>
+                                        {% for areass in registro_form.fields.area.queryset %}
+                                            {% if areass.pk < 33 %}
+                                                <option value="{{ areass.pk }}"
+                                                    {% if areass.pk in registro_form.initial.area %} selected{% endif %}>
+                                                    {{ areass.pk }}, {{ areass.nickname }}
+                                                </option>
+                                            {% endif %}
+                                        {% endfor %}
                                     </select>
                                 </div>
         
                                 <div class="px-2 py-10 flex flex-col space-y-2">
                                     <label for="id_accion1_area2">Áreas Responsables:</label>
                                     <select name="accion1_area2" size="7" required id="id_accion1_area2" multiple>
-                                        <option value="1">1,OR AGS,</option>
-                                        
-                                        <option value="2">2,OR BC,</option>
-                                        
-                                        <option value="3">3,OR BCS,</option>
-                                        
-                                        <option value="4">4,OR CAMP,</option>
-                                        
-                                        <option value="5">5,OR COAH,</option>
-                                        
-                                        <option value="6">6,OR COL,</option>
-                                        
-                                        <option value="7">7,OR CHIS,</option>
-                                        
-                                        <option value="8">8,OR CHIH,</option>
-                                        
-                                        <option value="9">9,OR CDMX,</option>
-                                        
-                                        <option value="10">10,OR DGO,</option>
-                                        
-                                        <option value="11">11,OR GTO,</option>
-                                        
-                                        <option value="12">12,OR GRO,</option>
-                                        
-                                        <option value="13">13,OR HGO,</option>
-                                        
-                                        <option value="14">14,OR JAL,</option>
-                                        
-                                        <option value="15">15,OR EDOMEX,</option>
-                                        
-                                        <option value="16">16,OR MICH,</option>
-                                        
-                                        <option value="17">17,OR MOR,</option>
-                                        
-                                        <option value="18">18,OR NAY,</option>
-                                        
-                                        <option value="19">19,OR NL,</option>
-                                        
-                                        <option value="20">20,OR OAX,</option>
-                                        
-                                        <option value="21">21,OR PUE,</option>
-                                        
-                                        <option value="22">22,OR QRO,</option>
-                                        
-                                        <option value="23">23,OR QROO,</option>
-                                        
-                                        <option value="24">24,OR SLP,</option>
-                                        
-                                        <option value="25">25,OR SIN,</option>
-                                        
-                                        <option value="26">26,OR SON,</option>
-                                        
-                                        <option value="27">27,OR TAB,</option>
-                                        
-                                        <option value="28">28,OR TAMPS,</option>
-                                        
-                                        <option value="29">29,OR TLX,</option>
-                                        
-                                        <option value="30">30,OR VER,</option>
-                                        
-                                        <option value="31">31,OR YUC,</option>
-                                        
-                                        <option value="32">32,OR ZAC,</option>
-                                        
-                                        <option value="33">33,OC,</option>
-                                        
-                                        <option value="34">34,OSCJ,</option>
-                                        
-                                        <option value="35">35,CECC,</option>
-                                        
-                                        <option value="36">36,DCS,</option>
-                                        
-                                        <option value="37">37,DGA,</option>
-                                        
-                                        <option value="38">38,DGCOR,</option>
-                                        
-                                        <option value="39">39,DGCVM,</option>
-                                        
-                                        <option value="40">40,DGPMV,</option>
-                                        
-                                        <option value="41">41,DGRAM,</option>
-                                        
-                                        <option value="42">42,DGTIC,</option>
+                                        {% for areass in registro_form.fields.accion1_area2.queryset %}
+                                            <option value="{{ areass.pk }}"
+                                                {% if areass.pk in registro_form.initial.accion1_area2 %} selected{% endif %}>
+                                                {{ areass.pk }}, {{ areass.nickname }}
+                                            </option>
+                                        {% endfor %}
                                     </select>
                                 </div>
         
@@ -390,7 +253,7 @@
                     </div>
                 </div>
                 <div class="text-center">
-                    <button class="py-3 px-6 mx-1 bg-inm-marron-200 hover:bg-inm-marron-100 rounded-xl text-white" type="submit">Guardar Acuerdo</button>
+                    <button class="py-3 px-6 mx-1 bg-inm-marron-200 hover:bg-inm-marron-100 rounded-xl text-white">Guardar Acuerdo</button>
                 </div>
             </div>
         </form>

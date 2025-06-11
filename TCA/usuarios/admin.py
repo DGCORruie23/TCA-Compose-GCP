@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Registro, Area, Rubro,  Acciones, UsuarioP, Mensaje, Notificacion
+from .models import Registro, Area, Rubro,  Acciones, UsuarioP, Mensaje, Notificacion, Periodo
 
 class RegistroAdmin(admin.ModelAdmin):
     list_display = ["idRegistro" ,"claveAcuerdo","fecha_inicio", "porcentaje_avance", "estado"]
@@ -17,4 +17,5 @@ admin.site.register(Rubro)
 admin.site.register(UsuarioP)
 admin.site.register(Acciones)
 admin.site.register(Mensaje)
+admin.site.register(Periodo)
 admin.site.register(Notificacion, NotificacionAdmin)

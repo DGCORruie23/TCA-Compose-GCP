@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{% load static %}ßC
+{% load static %}
 <html lang="es">
 
 <head>
@@ -8,11 +8,8 @@
 
   <!-- <script src="{% static 'js/carousel.js' %}"></script> -->
   <title>{% block title %}{% endblock title %}</title>
-
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900&display=swap" rel="stylesheet" />
-  <!-- TW Elements styles-->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tw-elements/dist/css/tw-elements.min.css" />
-  <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> -->
   <script src="https://cdn.tailwindcss.com/3.3.0"></script>
   <script src="{% static 'js/tailwind.config.js' %}"></script>
 
@@ -54,6 +51,11 @@
     .btn1 {
       display: inline-block;
       vertical-align: middle;
+    }
+
+    .dataIndex {
+      margin-bottom: -30px;
+      color: rgb(155,155,155);
     }
 
 
@@ -116,20 +118,66 @@
       font-weight: bold;
     }
 
-
+    .header-style {
+      background-color:rgb(150, 150, 150);
+    }
 
     .logoGOB {
 
       margin-top: auto;
       margin-bottom: auto;
     }
+
+
+        .main-footer{
+        background-color: #611232;
+        min-height: 56px;
+        color: #FFF;
+        padding: 0px 0 0px;
+        text-align: left;
+        font-weight: 300;
+    }
+
+    footer {
+
+      padding: 10px 0;
+    }
+
+    .footer_container {
+      max-width: 2560px;
+      margin: auto;
+      padding: 0 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap-reverse;
+    }
+
+    .footer-pleca {
+      background-color: #fff;
+      background-image: url(https://framework-gb.cdn.gob.mx/gobmx/img/pleca.svg);
+      background-repeat: repeat-x;
+    }
+    
   </style>
 
 </head>
 
 <body class="flex flex-col mx-auto my-auto min-h-screen">
 
-  <header>
+  {% comment %} <div class="w-4/4 text-center p-2 bg-[#10312B] mx-10"> {% endcomment %}
+
+  <header class="header-style">
+    <div class='dataIndex'>ßC</div>
+    <div class="flex items-center justify-between">
+        <div class="w-4/4 text-center p-2 mx-10">
+              <a href="/">
+                <img src="{% static 'icons/banner_TCA.png' %}" alt="Logo Completo" class="scale-[0.6]">
+              </a>
+        </div>
+</header>
+
+  {% comment %} <header>
     <div class="flex items-center justify-between">
         <!-- Columna A: Logo -->
         <div class="w-1/8 flex justify-start p-2">
@@ -152,11 +200,11 @@
         
         <!-- Columna C: Logo -->
         <div class="w-1/8 flex justify-end p-2">
-            {% comment %} <img src="{% static 'icons/LOGO3.png' %}" alt="Logo G" class="h-16"> {% endcomment %}
+            <img src="{% static 'icons/LOGO3.png' %}" alt="Logo G" class="h-16">
             <img src="{% static 'icons/inm.png' %}" alt="Logo C" class="h-16">
         </div>
     </div>
-</header>
+</header> {% endcomment %}
    
   {% if request.user.is_authenticated %}
 
@@ -181,7 +229,21 @@
 
   {% endblock content %}
 
-  <footer>
+  <footer class="main-footer">
+    <div class="footer_container">
+      <div class="logo"> <img src="https://framework-gb.cdn.gob.mx/gobmx/img/logo_blanco.svg" width="150px" alt="logo"
+          style="margin-right: 150px; margin-top: 5px; margin-bottom: 5px"></div>
+      <div class="social_media">
+      </div>
+    </div>
+    <div class="footer-pleca">
+      <br>
+    </div>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/tw-elements/dist/js/tw-elements.umd.min.js"></script>
+</body>
+
+  {% comment %} <footer>
     <div class="footer_container">
       <div class="logo"> <img src="{% static 'icons/felipe.png' %}" width="150px" alt="logo"
           style="margin-right: 150px;"></div>
@@ -191,6 +253,6 @@
     </div>
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/tw-elements/dist/js/tw-elements.umd.min.js"></script>
-</body>
+</body> {% endcomment %}
 
 </html>

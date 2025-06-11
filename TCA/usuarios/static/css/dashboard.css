@@ -192,7 +192,7 @@ tr.header {
     color: #235B4E;
     font-weight: bold;
     font-size: 30px;
-    margin-bottom: 10px;
+    margin-bottom: -20px;
 }
 
 .flex {
@@ -302,6 +302,15 @@ td {
 }
 
 
+.search-container select {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    margin-right: 10px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
 
 .search-container input {
     flex: 1;
@@ -315,6 +324,7 @@ td {
 
 .search-container {
     display: flex;
+    align-items: stretch;
     justify-content: space-between;
     margin-bottom: 20px;
     margin-left: 10%;

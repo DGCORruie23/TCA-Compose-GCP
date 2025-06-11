@@ -8,7 +8,7 @@ from datetime import datetime
 class RegistroConAccionesYPruebasForm(forms.ModelForm):
     class Meta:
         model = Registro
-        fields = ['claveAcuerdo','fecha_inicio', 'fecha_termino', 'rubro', 'area', ]
+        fields = ['claveAcuerdo','fecha_inicio', 'fecha_termino', 'rubro', 'area', 'periodo',]
         labels = {
             'area': 'OR',
         }    
@@ -22,7 +22,7 @@ class RegistroConAccionesYPruebasForm(forms.ModelForm):
 class RegistroConAccionesFORM(forms.ModelForm):
     class Meta:
         model = Registro
-        fields = ['claveAcuerdo', 'fecha_inicio', 'fecha_termino', 'rubro', 'area', 'estado', 'porcentaje_avance']
+        fields = ['claveAcuerdo', 'fecha_inicio', 'fecha_termino', 'rubro', 'area', 'estado', 'porcentaje_avance', 'periodo',]
         labels = {
             'claveAcuerdo': 'Clave de Acuerdo',
             'area': 'OR',

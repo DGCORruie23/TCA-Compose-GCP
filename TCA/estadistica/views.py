@@ -1,21 +1,43 @@
 from datetime import datetime, date
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from usuarios.models import Registro, Acciones, Notificacion, Area, Rubro, UsuarioP
+from usuarios.models import Registro, Acciones, Notificacion, Area, Rubro, UsuarioP, Periodo
 from django.db.models import Count, Q
 from django.db.models.functions import ExtractYear, Substr
 from django.http import HttpResponse
 import openpyxl as opxl
 
 @login_required
-def general(request):
+def opc_periodo(request):
     if request.method == 'GET':
-        userDataI = UsuarioP.objects.filter(user__username=request.user).first()
+        context = {
+            'periodo_form': Periodo.objects.all()
+        }
+        return render(request, "estadistica/periodo.html", context)
+    else:
+        return render(request, "base/error404.html")
 
+@login_required
+def general(request):
+    if request.method == 'POST':
+        
+        opc = [str(a.pk) for a in Periodo.objects.all() ]
+
+        seleccion = str(request.POST.get('periodo'))
+
+        if (seleccion not in opc) and (seleccion != 'all'):
+            return render(request, "base/error404.html")
+
+        userDataI = UsuarioP.objects.filter(user__username=request.user).first()
+        
         registros = Registro.objects.filter(area=userDataI.OR)
+        if seleccion in opc:
+            registros = Registro.objects.filter(area=userDataI.OR, periodo__id=int(seleccion))
 
         if userDataI.tipo == "1":
             registros = Registro.objects.all()
+            if seleccion in opc:
+                registros = Registro.objects.filter(periodo__id=int(seleccion))
         
         consultarAreas = Area.objects.all()
         consultarRubros = Rubro.objects.all()
@@ -105,17 +127,26 @@ def general(request):
             "visitas": len(registro_V_A),
             "acuerdos": acuerdosT,
             "years": lista_años,
+            "seleccion": seleccion,
         }
 
         return render(request, "estadistica/informacion.html", context)
+    
+    else:
+        return render(request, "base/error404.html")
 
 @login_required
 def pendientes(request):
     if(request.method == "GET"):
 
+        opc = [str(a.pk) for a in Periodo.objects.all() ]
         userDataI = UsuarioP.objects.filter(user__username=request.user).first()
 
-        registros = Registro.objects.filter(estado="1").order_by('fecha_inicio')
+        registros = Registro.objects.filter(area=userDataI.OR, estado="1").order_by('fecha_inicio')
+        # registros = Registro.objects.filter(area=userDataI.OR)
+        if userDataI.tipo == "1":
+            registros = Registro.objects.filter(estado="1").order_by('fecha_inicio')
+            # registros = Registro.objects.all()
 
         # if userDataI.tipo == "1":
         #     registros = Registro.objects.all()
