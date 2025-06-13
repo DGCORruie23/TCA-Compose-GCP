@@ -56,6 +56,7 @@ services:
       - ./certificados:/etc/nginx/certs:ro
       - /etc/nginx/vhost.d
       - /usr/share/nginx/html
+      - ./proxy-ngx/adjust.conf:/etc/nginx/conf.d/adjust.conf:ro
     labels:
       - com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy
 
