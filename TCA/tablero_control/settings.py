@@ -239,6 +239,9 @@ STATIC_ROOT = os.path.join(BASE_DIR_ROOT,'data/static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR_ROOT, 'data/media')
 
+FILE_UPLOAD_MAX_MEMORY_SIZE = 26214400  # 25 MB por defecto cada archivo
+DATA_UPLOAD_MAX_MEMORY_SIZE = None
+
 # Archivos de medios
 # MEDIA_URL = '/media/'
 # MEDIA_ROOT = os.path.join(BASE_DIR_ROOT,'media')
@@ -246,7 +249,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR_ROOT, 'data/media')
 # SESSION_COOKIE_AGE = 360
 
 # DATA_UPLOAD_MAX_MEMORY_SIZE = None  # Removes the size limit
-# FILE_UPLOAD_MAX_MEMORY_SIZE = 104857600  # Sets the limit to 100MB, for example
+# FILE_UPLOAD_MAX_MEMORY_SIZE = 104857600  # Sets the limit to 100MB
 
 # STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
