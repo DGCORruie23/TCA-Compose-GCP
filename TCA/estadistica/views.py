@@ -96,6 +96,8 @@ def general(request):
         #     total_unico=Count('rubro'),
         #     ).order_by("rubro",'year')
 
+        col_años= [info['year'] for info in registros_years]
+
         data_by_rubro = {}
         for registro in registros_rubros:
             # rubro = registro['rubro']
@@ -104,7 +106,8 @@ def general(request):
             total = registro['total_unico']
             
             if rubro not in data_by_rubro:
-                data_by_rubro[rubro] = {year: 0 for year in lista_años}
+                # data_by_rubro[rubro] = {year: 0 for year in lista_años}
+                data_by_rubro[rubro] = {year: 0 for year in col_años}
             
             # Actualizar el año con el total correcto
             data_by_rubro[rubro][yearT] = total
@@ -126,7 +129,8 @@ def general(request):
             "tabla3" : data_by_rubro,
             "visitas": len(registro_V_A),
             "acuerdos": acuerdosT,
-            "years": lista_años,
+            # "years": lista_años,
+            "years": col_años,
             "seleccion": seleccion,
         }
 
