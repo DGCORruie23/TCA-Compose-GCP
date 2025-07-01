@@ -17,6 +17,7 @@ services:
       - ./TCA/estadistica:/src/TCA/estadistica
       - ./TCA/usuarios:/src/TCA/usuarios
       - ./TCA/dashboard:/src/TCA/dashboard
+      - ./TCA/panel:/src/TCA/panel
 
   db:
     container_name: databasePG

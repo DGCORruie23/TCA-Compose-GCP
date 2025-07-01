@@ -17,7 +17,7 @@ from django.dispatch import receiver
 class Area(models.Model):
     idArea = models.AutoField(primary_key=True)
     nickname = models.CharField(max_length=150)
-    name = models.CharField(max_length=300, default="Nombre de Area")
+    name = models.CharField(max_length=300, default="Area 1")
 
     def __str__(self):
         return f"{self.idArea},{self.nickname},"

@@ -24,6 +24,8 @@ mimetypes.add_type("text/css", ".css", True)
 # env = environ.Env()
 # environ.Env.read_env()
 
+ACCESS_KEY = "TCA2025_1dg"
+
 # import environ
 # import google.auth
 # from google.cloud import secretmanager
@@ -90,6 +92,7 @@ INSTALLED_APPS = [
     'dashboard',
     'tailwind',
     'estadistica',
+    'panel',
 
 ]
 
