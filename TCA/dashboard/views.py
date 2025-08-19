@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import ListView, CreateView, UpdateView
 from django.contrib.auth.models import User
 from django.db.models import Max
 # from usuarios.models import usuarioL
@@ -26,6 +27,7 @@ import zipfile
 from io import BytesIO
 
 from django.http import JsonResponse
+from django.urls import reverse_lazy
 
 # from twilio.rest import Client
 
@@ -271,6 +273,12 @@ def descargar_archivos_acuerdo(request, registro_id):
     response['Content-Disposition'] = f'attachment; filename={claveA}.zip'
     return response
 
+class AcuerdoCreateNew(CreateView):
+    model = Registro
+    form_class = RegistroConAccionesYPruebasForm
+    template_name = 'dashboard/crear_registroN.html'
+    success_url = reverse_lazy('dashboard')
+
 @login_required
 def crear_registro(request):
     if request.method == 'POST':
@@ -286,19 +294,6 @@ def crear_registro(request):
             accion = Acciones.objects.create(
                 descripcion=registro_form.cleaned_data['accion1_descripcion']
             )
-
-            # users = UsuarioP.objects.filter(OR__in=areas2)
-            # users2 = UsuarioP.objects.filter(OR__in=area)
-            # print("users")
-            # for user in users:
-                
-            #     print(user.Ntelefono)
-            # print("users2")
-            # for user in users2:
-            #     print("users2")
-            #     print(user.Ntelefono)
-
-            # nombres_areas = [area.nickname for area in Area.objects.all()]
             
             accion.area2.set(areas2)
             accion.save()
@@ -306,20 +301,6 @@ def crear_registro(request):
 
             mensaje = f"Se ha creado un nuevo acuerdo: {claveA} en la {area[0].name}."
             generarNotificacion(registro.idRegistro, mensaje, userDataI.idUser)
-            # print(area)
-            # Obtener todos los usuarios del área asociada
-            # print(areas2)
-            # account_sid = os.getenv('TWILIO_ACCOUNT_SID')
-            # auth_token = os.getenv('TWILIO_AUTH_TOKEN')
-
-            # client = Client(account_sid, auth_token)
-            # message = client.messages.create(
-            #     from_='whatsapp:+14155238886',
-            #     body='DGCOR te ha añadido al TCA, visita tca.dgcor.com',
-            #     to=f'whatsapp:+5215572247394'
-            # )
-
-            # print(message.sid)
 
             return redirect('dashboard')
     else:

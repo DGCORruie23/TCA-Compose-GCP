@@ -24,7 +24,7 @@ mimetypes.add_type("text/css", ".css", True)
 # env = environ.Env()
 # environ.Env.read_env()
 
-ACCESS_KEY = "TCA2025_1dg"
+ACCESS_KEY = os.environ.get('ACCESS_KEY', default='nd@2=4ye0j%ko65$^w=o6*3trmobv7m9mygzr+jb=it=c')
 
 # import environ
 # import google.auth
@@ -67,7 +67,6 @@ LOGIN_REDIRECT_URL = '/dashboard/'
 LOGIN_URL = 'log-in'
 LOGOUT_REDIRECT_URL = 'index'
 
-
 # project_id = os.environ.get("GOOGLE_CLOUD_PROJECT")
 
 # client = secretmanager.SecretManagerServiceClient()
@@ -90,10 +89,8 @@ INSTALLED_APPS = [
 
     'usuarios',
     'dashboard',
-    'tailwind',
     'estadistica',
     'panel',
-
 ]
 
 MIDDLEWARE = [

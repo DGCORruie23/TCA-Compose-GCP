@@ -39,6 +39,8 @@ urlpatterns = [
     path('notificacion_leida/<int:notificacion_id>/', vDash.marcar_notificacion_leida, name='marcar_notificacion_leida'),
     
     path('crear_registro/', vDash.crear_registro ,name="crear_registro" ),
+    path('crear_registroN/', vDash.AcuerdoCreateNew.as_view() ,name="crear_registroN" ),
+
     path('detalles/<int:registro_id>/', vDash.detalles , name='detalles'),
     path('carga_masiva/', vDash.cargaMasiva , name='carga_masiva'),
 
