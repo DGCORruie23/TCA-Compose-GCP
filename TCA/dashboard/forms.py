@@ -15,6 +15,7 @@ class RegistroConAccionesYPruebasForm(forms.ModelForm):
 
     accion1_area2 = forms.ModelMultipleChoiceField(queryset=Area.objects.all(), label="Áreas Responsables")
     accion1_descripcion = forms.CharField(widget=forms.Textarea, label="Descripción")
+    accion1_antecedente = forms.CharField(widget=forms.Textarea, label="Antecedente")
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['area'].queryset = Area.objects.filter(idArea__lte=32) 
@@ -89,9 +90,19 @@ class RegistroConAccionesFORM(forms.ModelForm):
 class AccionesForm(forms.ModelForm):
     class Meta:
         model = Acciones
-        fields = ['area2', 'descripcion']
+        fields = ['area2', 'antecedente','descripcion']
         labels = {
             'area2': 'Áreas Responsables',
+        }
+        widgets = {
+            'antecedente': forms.Textarea(attrs={
+                'cols': 30,
+                'rows': 7,
+            }),
+            'descripcion': forms.Textarea(attrs={
+                'cols': 30,
+                'rows': 7,
+            }),
         }
 
 class MensajeForm(forms.ModelForm):

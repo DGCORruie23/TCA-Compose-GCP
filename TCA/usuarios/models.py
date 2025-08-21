@@ -76,6 +76,7 @@ class Acciones(models.Model):
     idAccion = models.AutoField(primary_key=True)
     idRegistro = models.ManyToManyField(Registro, related_name='accionR')
     area2 = models.ManyToManyField(Area, related_name='accionA2')
+    antecedente = models.TextField(blank=True)
     descripcion = models.TextField()
 
     def __str__(self):
