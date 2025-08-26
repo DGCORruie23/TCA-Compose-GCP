@@ -292,7 +292,8 @@ def crear_registro(request):
             claveA = registro_form.cleaned_data['claveAcuerdo']
 
             accion = Acciones.objects.create(
-                descripcion=registro_form.cleaned_data['accion1_descripcion']
+                descripcion=registro_form.cleaned_data['accion1_descripcion'],
+                antecedente=registro_form.cleaned_data['accion1_antecedente']
             )
             
             accion.area2.set(areas2)
