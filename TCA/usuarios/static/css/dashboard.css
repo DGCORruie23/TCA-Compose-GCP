@@ -16,7 +16,7 @@ tr:nth-child(even) {
 }
 
 td:nth-child(4) {
-    text-align: justify;
+    text-align: center;
 }
 
 th {

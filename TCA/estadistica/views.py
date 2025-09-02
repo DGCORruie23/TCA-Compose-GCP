@@ -2,7 +2,7 @@ from datetime import datetime, date
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from usuarios.models import Registro, Acciones, Notificacion, Area, Rubro, UsuarioP, Periodo
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Avg, IntegerField
 from django.db.models.functions import ExtractYear, Substr
 from django.http import HttpResponse
 import openpyxl as opxl
@@ -41,9 +41,10 @@ def general(request):
         
         consultarAreas = Area.objects.all()
         consultarRubros = Rubro.objects.all()
-        nombres_areas = [area.nickname for area in consultarAreas]
-        # lista_años = [str(año) for año in range(2020, datetime.now().year + 1)]
-        lista_años = range(2020, datetime.now().year + 1)
+
+        # nombres_areas = [area.nickname for area in consultarAreas]
+        # # lista_años = [str(año) for año in range(2020, datetime.now().year + 1)]
+        # lista_años = range(2020, datetime.now().year + 1)
 
         # registros_OR = registros.values('area').annotate(total= Count('idRegistro'))
         # registros_OR_year = registros.values('area', year=ExtractYear('fecha_inicio')).annotate(total= Count('idRegistro')).order_by('area', 'year')
@@ -60,13 +61,30 @@ def general(request):
         pendientesT = 0
         atenditosT = 0
 
+
         #Tabla 1
         # registros_visitas = registros.values('area', 'fecha_inicio').annotate(total= Count('idRegistro'), ).order_by('area', 'fecha_inicio')
         registros_visitas = registros.values('area', 'fecha_inicio').annotate(
             total=Count('idRegistro'),
             pendiente=Count('idRegistro', filter=Q(estado="1")),
-            atendido=Count('idRegistro', filter=Q(estado="2"))
+            atendido=Count('idRegistro', filter=Q(estado="2")),
+            seguimiento = Avg('porcentaje_avance', output_field=IntegerField())
         ).order_by('area', 'fecha_inicio')
+
+        ors_mapa = { area_.name.replace("OR ",""): [] for area_ in consultarAreas[:32]}
+
+        for registro in registros_visitas:
+            oficina_ = str(consultarAreas.filter(idArea=registro['area']).first().name).replace("OR ","")
+            if oficina_ in ors_mapa:
+                ors_mapa[oficina_].append({
+                    'fecha': datetime.strftime(registro['fecha_inicio'], "%d/%m/%Y"),
+                    'total': registro['total'],
+                    'pendiente': registro['pendiente'],
+                    'atendido': registro['atendido'],
+                    'avance': registro['seguimiento'],
+                    })
+        
+        # print(ors_mapa)
 
         for registro in registros_visitas:
             # print(f"OR: {consultarAreas.filter(idArea=registro['area']).first().name} Fecha: {registro['fecha_inicio']} TOTAL {registro['total']}")
@@ -132,6 +150,8 @@ def general(request):
             # "years": lista_años,
             "years": col_años,
             "seleccion": seleccion,
+            "usuario": userDataI,
+            "mapa": ors_mapa,
         }
 
         return render(request, "estadistica/informacion.html", context)
