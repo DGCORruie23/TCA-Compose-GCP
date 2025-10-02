@@ -605,23 +605,6 @@ td.actions-column form {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 .notification-container {
     display: flex;
     justify-content: flex-end;
@@ -648,15 +631,6 @@ td.actions-column form {
     padding: 3px 7px;
     font-size: 12px;
 }
-
-
-
-
-
-
-
-
-
 
 
 
@@ -729,10 +703,6 @@ td#fechaTermino {
     max-width: 75px;
     overflow: hidden;
 }
-
-
-
-
 
 
 .elegant-label {

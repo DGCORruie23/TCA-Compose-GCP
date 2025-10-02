@@ -185,7 +185,16 @@ def dashboard(request):
             'filtroResp': respA,
         }
 
-        return render(request, "dashboard/dashboard.html", context)
+        user_agent = request.META.get('HTTP_USER_AGENT', '').lower()
+        if 'mobile' in user_agent:
+            # template = 'home_mobile.html'
+            return render(request, "dashboard/dashboard_m.html", context)
+        else:
+            return render(request, "dashboard/dashboard.html", context)
+            # template = 'home_pc.html'
+        return render(request, template)
+
+        # return render(request, "dashboard/dashboard.html", context)
 
 @login_required
 def marcar_notificacion_leida(request, notificacion_id):
