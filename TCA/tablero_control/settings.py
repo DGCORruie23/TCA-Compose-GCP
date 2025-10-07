@@ -26,6 +26,8 @@ mimetypes.add_type("text/css", ".css", True)
 
 ACCESS_KEY = os.environ.get('ACCESS_KEY', default='nd@2=4ye0j%ko65$^w=o6*3trmobv7m9mygzr+jb=it=c')
 
+MODO_MANTENIMIENTO = os.getenv("MODO_MANTENIMIENTO", "False").lower() == "true"
+
 # import environ
 # import google.auth
 # from google.cloud import secretmanager
@@ -94,6 +96,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "panel.middleware.MantenimientoMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
