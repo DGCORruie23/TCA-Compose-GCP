@@ -1,5 +1,5 @@
 #imagen a instalar
-FROM python:3.9
+FROM python:3.9.23-slim-trixie
 
 #usamos el directorio de trabajo
 WORKDIR /src/TCA
@@ -11,7 +11,8 @@ ENV PYTHONUNBUFFERED 1
 #ACTUALIZAR PIP
 RUN pip install --upgrade pip
 
-#actualizar e instalar mysql
+#actualizar e instalar conectores de postgresql
+# RUN apt-get install gcc libpq-dev python3-dev musl-dev postgresql-client
 RUN apt-get update && apt-get install -y gcc libpq-dev python3-dev musl-dev postgresql-client
 # RUN apt-get update && apt-get install -y gcc libpq-dev python3-dev musl-dev libmariadb-dev mariadb-client 
 
@@ -21,10 +22,11 @@ ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
 
-#Copiar el proyecto entero
-COPY . /src/TCA
+#Copiar los requisitos del proyecto
+COPY ./req.txt .
 
-# RUN mkdir /src/TCA/data
+# Creamos unas carpetas para los staticos y los datos 
+RUN mkdir /src/TCA/data
 
 RUN mkdir /src/TCA/data/static
 
@@ -34,6 +36,9 @@ RUN mkdir /src/TCA/data/media
 # COPY ./req.txt ./
 #instalar dependencias 
 RUN pip install -r req.txt
+
+#Copiar el proyecto entero
+COPY . /src/TCA
 
 # RUN pip install google-cloud-storage
 
