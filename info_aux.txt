@@ -1,3 +1,27 @@
+from usuarios.models import Registro
+from django.db.models import Count
+from django.db.models.functions import TruncMonth
+
+
+queryset = (
+    Registro.objects.filter(estado=1)
+    .annotate(mes=TruncMonth('fecha_finalizacion'))
+    .values('mes', 'claveAcuerdo')
+    .annotate(total=Count('idRegistro'))
+    .order_by('mes')
+)
+
+queryset2 = (
+    Registro.objects.filter(estado=2)
+    .annotate(mes=TruncMonth('fecha_inicio'))
+    .values('mes')
+    .annotate(total=Count('idRegistro'))
+    .order_by('mes')
+)
+
+
+
+
 upstream backendTCA{
     server web:8000;
 }

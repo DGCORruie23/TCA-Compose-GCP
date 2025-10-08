@@ -7,3 +7,4 @@ TCA/data/
 certbot/conf/
 certbot/www/
 TCA/entorno
+certificados/
