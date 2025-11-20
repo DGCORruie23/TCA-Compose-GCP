@@ -1,5 +1,6 @@
 services:
   web:
+    profiles: ["dev", "server"]
     container_name: TCAapp
     restart: always
     build: ./TCA
@@ -17,9 +18,25 @@ services:
       - ./TCA/estadistica:/src/TCA/estadistica
       - ./TCA/usuarios:/src/TCA/usuarios
       - ./TCA/dashboard:/src/TCA/dashboard
+      - ./TCA/supervision:/src/TCA/supervision
+      - ./TCA/tablero_control:/src/TCA/tablero_control
       - ./TCA/panel:/src/TCA/panel
+  
+  vite:
+    profiles: ["dev"]
+    container_name: TCAvite
+    build: ./vite
+    command: npm run dev
+    volumes:
+      - ./vite:/app
+      - /app/node_modules
+    ports:
+      - 5173:5173
+    environment:
+      - VITE_BACKEND_URL=http://localhost:8000
 
   db:
+    profiles: ["dev", "server"]
     container_name: databasePG
     restart: always
     image: postgres:16.4-alpine
@@ -30,6 +47,7 @@ services:
       - .env.db
 
   nginx:
+    profiles: ["dev", "server"]
     container_name: TcaNginx
     build: ./nginx
     expose:
@@ -47,6 +65,7 @@ services:
       - LETSENCRYPT_EMAIL=dgcor.rui23@gmail.com
 
   nginx-proxy:
+    profiles: ["server"]
     image: jwilder/nginx-proxy
     restart: always
     ports:
@@ -62,6 +81,7 @@ services:
       - com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy
 
   letsencrypt:
+    profiles: ["server"]
     image: jrcs/letsencrypt-nginx-proxy-companion
     restart: always
     volumes:

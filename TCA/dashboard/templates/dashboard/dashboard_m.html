@@ -77,6 +77,7 @@
         <a href="{% url 'dashboard' %}" class="bg-inm-gris-100 text-white px-3 py-2 lg:px-6 lg:py-3 rounded-xl hover:bg-inm-verde-200">Panel de Control</a>
 				<a href="{% url 'periodos_opc' %}" class="bg-inm-verde-100 text-white px-6 py-3 rounded-xl hover:bg-inm-marron-200">Estadistica</a>
         {% if dataU.0.tipo == "1" %}
+            <a href="{% url 'superv_urls:index' %}" class="bg-primary-400 hover:bg-primary-500 rounded-xl text-white text-center px-6 py-3">Supervisión</a>
             <a href="{% url 'user_admin:parametros' %}" class="bg-inm-marron-100 hover:bg-inm-gris-100 rounded-xl text-white text-center px-6 py-3">Administrar</a>
         {% endif %}
         <a href="{% url 'logout' %}" class="bg-inm-rojo-300 text-white px-3 py-2 lg:px-6 lg:py-3 rounded-xl hover:bg-inm-rojo-100">Cerrar sesión</a>
@@ -268,7 +269,6 @@
     </div>
 
     <div class="pagination">
-			<br>
 			<span class="step-links">
 				{% if registrosConFechas.has_previous %}
 					<a href="?page=1&filtro={{ filtroOR }}&año={{ filtroAño }}&resp={{ filtroResp }}" role="button" class="bg-inm-gris-100 hover:bg-inm-gris-200 text-white py-1 px-3 rounded">&laquo; Pagina 1</a>

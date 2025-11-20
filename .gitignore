@@ -8,3 +8,4 @@ certbot/conf/
 certbot/www/
 TCA/entorno
 certificados/
+vite/node_modules/

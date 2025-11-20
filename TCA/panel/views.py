@@ -17,14 +17,19 @@ class AccessKeyView(FormView):
     success_url = reverse_lazy('user_admin:parametros')
 
     def form_valid(self, form):
-        if form.cleaned_data['key'] == settings.ACCESS_KEY:
-            self.request.session['has_access'] = True
+        llave = form.cleaned_data['key']
+        if llave == settings.ACCESS_KEY:
+            print('llave correcta')
+            # self.request.session['has_access'] = True
+            self.request.session['access_keyA'] = llave
             return super().form_valid(form)
         form.add_error('key', 'Clave incorrecta')
         return self.form_invalid(form)
 
 class InicioView(LoginRequiredMixin, AccessKeyRequiredMixin, TemplateView):
     template_name = "panel/inicio.html"
+    # required_key = "ACCESS_KEY"
+    # redirect_url_name = "user_admin:access_key" 
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)

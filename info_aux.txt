@@ -4,9 +4,22 @@ from django.db.models.functions import TruncMonth
 
 
 queryset = (
-    Registro.objects.filter(estado=1)
+    Registro.objects.filter(estado=2)
     .annotate(mes=TruncMonth('fecha_finalizacion'))
     .values('mes', 'claveAcuerdo')
+    .annotate(total=Count('idRegistro'))
+    .order_by('mes')
+)
+
+for index, value in enumerate(queryset):
+  print(value)
+  if(index % 400 == 0):
+    input("presiona tecla")
+
+queryset = (
+    Registro.objects.filter(estado=1)
+    .annotate(mes=TruncMonth('fecha_finalizacion'))
+    .values('mes')
     .annotate(total=Count('idRegistro'))
     .order_by('mes')
 )
@@ -19,6 +32,8 @@ queryset2 = (
     .order_by('mes')
 )
 
+for i in queryset:
+  print(i)
 
 
 

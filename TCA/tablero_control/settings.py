@@ -25,6 +25,7 @@ mimetypes.add_type("text/css", ".css", True)
 # environ.Env.read_env()
 
 ACCESS_KEY = os.environ.get('ACCESS_KEY', default='nd@2=4ye0j%ko65$^w=o6*3trmobv7m9mygzr+jb=it=c')
+SUPERVISION_KEY = os.environ.get('SUPERVISION_KEY', default='nd@2=4ye0j%$^w=o6*3tskdyrdl7m9mygzr+wp=it=1')
 
 MODO_MANTENIMIENTO = os.getenv("MODO_MANTENIMIENTO", "False").lower() == "true"
 
@@ -93,10 +94,16 @@ INSTALLED_APPS = [
     'dashboard',
     'estadistica',
     'panel',
+    'supervision',
+
+    # terceros
+    'rest_framework',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     "panel.middleware.MantenimientoMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -104,6 +111,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
 ]
 
 ROOT_URLCONF = 'tablero_control.urls'

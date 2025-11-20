@@ -31,6 +31,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('usuarios/', include('usuarios.urls')),
     path('administrar/', include('panel.urls')),
+    path('supervision/', include('supervision.urls')),
     
     path('', index, name="index"),
     path('log-in/', viewsL.LoginView.as_view(template_name= 'base/log_in.html'), name='log-in'),

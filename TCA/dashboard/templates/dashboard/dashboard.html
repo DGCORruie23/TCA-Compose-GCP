@@ -12,6 +12,7 @@
   <a href="{% url 'periodos_opc' %}" class="bg-inm-verde-100 text-white px-6 py-3 rounded-xl hover:bg-inm-marron-200">Estadistica</a>
   {% if dataU.0.tipo == "1" %}
       <a href="{% url 'user_admin:parametros' %}" class="bg-inm-marron-100 hover:bg-inm-gris-100 rounded-xl text-white text-center px-6 py-3">Administrar</a>
+      <a href="{% url 'superv_urls:index' %}" class="bg-primary-400 hover:bg-primary-500 rounded-xl text-white text-center px-6 py-3">Supervisión</a>
   {% endif %}
 {% endblock estadistica %}
 

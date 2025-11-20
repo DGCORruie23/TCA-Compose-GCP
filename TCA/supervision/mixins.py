@@ -1,20 +1,10 @@
-from django.shortcuts import redirect
-from django.urls import reverse
-
-# class AccessKeyRequiredMixin:
-#     """Redirige a `access_key` si no hay `has_access` en la sesión."""
-#     def dispatch(self, request, *args, **kwargs):
-#         if not request.session.get('has_access', False):
-#             return redirect(reverse('user_admin:access_key'))
-#         return super().dispatch(request, *args, **kwargs)
-    
 from django.conf import settings
 from django.shortcuts import redirect
 from django.contrib import messages
 
 class AccessKeyRequiredMixin:
-    required_key = 'ACCESS_KEY'            # nombre de la clave en settings
-    redirect_url_name = 'user_admin:access_key'    # nombre de la URL a donde redirigir
+    required_key = 'SUPERVISION_KEY'            # nombre de la clave en settings
+    redirect_url_name = 'superv_urls:access_key'    # nombre de la URL a donde redirigir
 
     def dispatch(self, request, *args, **kwargs):
         if not self.required_key:
@@ -22,7 +12,7 @@ class AccessKeyRequiredMixin:
 
         # Obtener la clave configurada
         correct_key = getattr(settings, self.required_key, None)
-        user_key = request.session.get("access_keyA")
+        user_key = request.session.get("access_keyS")
 
         print('obt', correct_key, 'sistema', user_key)
 
