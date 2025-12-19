@@ -136,3 +136,19 @@ class RespuestaFormularioSerializer(serializers.ModelSerializer):
 
     def get_calificacion_global(self, obj):
         return obj.calcular_calificacion()
+
+    def update(self, instance, validated_data):
+        respuestas_data = validated_data.pop("respuestas", [])
+        
+        # Actualizar campos del formulario
+        instance.oficina = validated_data.get("oficina", instance.oficina)
+        instance.descripcion = validated_data.get("descripcion", instance.descripcion)
+        instance.usuario = validated_data.get("usuario", instance.usuario)
+        instance.save()
+
+        # Reemplazar respuestas (Estrategia: Borrar y Recrear)
+        instance.respuestas.all().delete()
+        for r in respuestas_data:
+            RespuestaPregunta.objects.create(respuesta_formulario=instance, **r)
+
+        return instance

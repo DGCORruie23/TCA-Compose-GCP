@@ -48,7 +48,10 @@ class InicioView(LoginRequiredMixin, AccessKeyRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        req = super().get_context_data(request=self.request.get_host())
         context["debug"] = settings.DEBUG
+        context["url_i"] = req['request']
+        # print(context["url_i"])
         return context
     
     def get(self, request, *args, **kwargs):

@@ -12,9 +12,9 @@ export default function FormulariosList({ onEdit }) {
   }, []);
 
   return (
-    <div className="p-6">
+    <div className="p-6 w-full h-full overflow-y-auto">
       <h1 className="text-xl font-bold mb-4">📋 Formularios disponibles</h1>
-      
+
       {formularios.length === 0 ? (
         <p>No hay formularios aún.</p>
       ) : (

@@ -2,12 +2,15 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { API_URL } from "../values/apis";
 import AutoResizeTextarea from "../components/AutoResizeTextarea";
+import Cookies from 'js-cookie';
 
 export default function FormularioBuilder({ existingForm, onBack }) {
   const [formulario, setFormulario] = useState({
     titulo: "",
     secciones: [],
   });
+
+  const csrftoken = Cookies.get('csrftoken');
 
   useEffect(() => {
     if (existingForm) {
@@ -76,24 +79,34 @@ export default function FormularioBuilder({ existingForm, onBack }) {
   const guardarFormulario = async () => {
 
     if (existingForm) {
-        axios.put(`${API_URL}/formularios/${existingForm.id}/`, formulario)
-            .then(() => alert("Formulario actualizado con éxito ✅"))
-            .catch( (err) => {
-                console.error(err);
-                alert("Error al guardar el formulario ❌");
-                console.error("Error al guardar:", err.response?.data || err.message);
-                })
+      axios.put(`${API_URL}/formularios/${existingForm.id}/`, formulario, {
+        headers: {
+          'X-CSRFToken': csrftoken,
+        },
+        withCredentials: true, // Important for sending cookies
+      })
+        .then(() => alert("Formulario actualizado con éxito ✅"))
+        .catch((err) => {
+          console.error(err);
+          alert("Error al guardar el formulario ❌");
+          console.error("Error al guardar:", err.response?.data || err.message);
+        })
     } else {
-        axios.post(`${API_URL}/formularios/`, formulario)
-            .then( () => {
-                alert("Formulario creado con éxito ✅");
-                setFormulario({ titulo: "", descripcion: "", secciones: [] });
-                })
-            .catch( (err) => {
-                console.error(err);
-                alert("Error al guardar el formulario ❌");
-                console.error("Error al guardar:", err.response?.data || err.message);
-                })
+      axios.post(`${API_URL}/formularios/`, formulario, {
+        headers: {
+          'X-CSRFToken': csrftoken,
+        },
+        withCredentials: true, // Important for sending cookies
+      })
+        .then(() => {
+          alert("Formulario creado con éxito ✅");
+          setFormulario({ titulo: "", descripcion: "", secciones: [] });
+        })
+        .catch((err) => {
+          console.error(err);
+          alert("Error al guardar el formulario ❌");
+          console.error("Error al guardar:", err.response?.data || err.message);
+        })
     }
     // try {
     //   await axios.post(`${API_URL}/formularios/`, formulario);
@@ -107,14 +120,14 @@ export default function FormularioBuilder({ existingForm, onBack }) {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-        { existingForm && 
-            <button onClick={onBack} className="mb-4 text-blue-600 underline">
-            ← Volver
-            </button>
-        }
-        
-        <h1 className="text-2xl font-bold mb-4">{existingForm ? "Editar Formulario" : "Nuevo Formulario"}</h1>
+    <div className="w-full p-6 h-full overflow-y-auto">
+      {existingForm &&
+        <button onClick={onBack} className="mb-4 text-blue-600 underline">
+          ← Volver
+        </button>
+      }
+
+      <h1 className="text-2xl font-bold mb-4">{existingForm ? "Editar Formulario" : "Nuevo Formulario"}</h1>
 
       {/* Título */}
       <input
@@ -153,7 +166,7 @@ export default function FormularioBuilder({ existingForm, onBack }) {
                 setFormulario({ ...formulario, secciones: nuevas });
               }}
               className="border p-2 flex-1 uppercase font-bold"
-            /> 
+            />
             <input
               type="number"
               min="1"
@@ -180,14 +193,14 @@ export default function FormularioBuilder({ existingForm, onBack }) {
                 <span className="toggle-icon-level2"></span>
 
                 <AutoResizeTextarea
-                    value={sub.titulo}
-                    placeholder="Título de la subsección"
-                    className="uppercase"
-                    onChange={(e) => {
-                        const nuevas = [...formulario.secciones];
-                        nuevas[sIndex].subsecciones[subIndex].titulo = e.target.value.toUpperCase();
-                        setFormulario({ ...formulario, secciones: nuevas });
-                    }}
+                  value={sub.titulo}
+                  placeholder="Título de la subsección"
+                  className="uppercase"
+                  onChange={(e) => {
+                    const nuevas = [...formulario.secciones];
+                    nuevas[sIndex].subsecciones[subIndex].titulo = e.target.value.toUpperCase();
+                    setFormulario({ ...formulario, secciones: nuevas });
+                  }}
                 />
                 <input
                   type="number"
@@ -249,13 +262,13 @@ export default function FormularioBuilder({ existingForm, onBack }) {
                     min="1"
                     value={preg.ponderacion}
                     onChange={(e) => {
-                        const nuevas = [...formulario.secciones];
-                        nuevas[sIndex].subsecciones[subIndex].preguntas[
-                            pIndex].tipo = parseFloat(e.target.value);
-                        setFormulario({ ...formulario, secciones: nuevas });
+                      const nuevas = [...formulario.secciones];
+                      nuevas[sIndex].subsecciones[subIndex].preguntas[
+                        pIndex].tipo = parseFloat(e.target.value);
+                      setFormulario({ ...formulario, secciones: nuevas });
                     }}
                     className="border p-2 w-24"
-                    />
+                  />
 
                   <button
                     onClick={() => eliminarPregunta(sIndex, subIndex, pIndex)}
