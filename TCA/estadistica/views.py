@@ -184,11 +184,12 @@ def pendientes(request):
             fecha = valor.fecha_inicio.strftime("%Y")
             clave = valor.claveAcuerdo
             rubro = (valor.rubro.first()).tipo
+            hallazgo = (valor.accionR.first()).antecedente
             descripcion = (valor.accionR.first()).descripcion
             avance = valor.porcentaje_avance
 
             # print(f"OR:{oficina[1]} -- {fecha} -- CLAVE:{clave} -- {rubro[:5]} -- {descripcion} -- {avance}")
-            worksheet.append([oficina[1], fecha, clave, rubro, descripcion, avance])
+            worksheet.append([oficina[1], fecha, clave, rubro, hallazgo, descripcion, avance])
         
         worksheet.append(['Numero de Acuerdos Pendientes: ', registros.count()])
 
