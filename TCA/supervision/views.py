@@ -14,13 +14,21 @@ from .models import (
     SubSeccion,
     Pregunta,
     RespuestaFormulario,
+    RegistroTemporal,
+    AccionesTemporal,
 )
+from usuarios.models import Area, Rubro, Periodo
 from .serializers import (
     FormularioSerializer,
     SeccionSerializer,
     SubseccionSerializer,
     PreguntaSerializer,
     RespuestaFormularioSerializer,
+    RegistroTemporalSerializer,
+    AccionesTemporalSerializer,
+    AreasSerializer,
+    RubrosSerializer,
+    PeriodosSerializer,
 )
 
 from rest_framework import viewsets
@@ -89,3 +97,25 @@ class PreguntaViewSet(viewsets.ModelViewSet):
 class RespuestaFormularioViewSet(viewsets.ModelViewSet):
     queryset = RespuestaFormulario.objects.all()
     serializer_class = RespuestaFormularioSerializer
+
+
+class RegistroTemporalViewSet(viewsets.ModelViewSet):
+    queryset = RegistroTemporal.objects.all()
+    serializer_class = RegistroTemporalSerializer
+
+
+class AccionesTemporalViewSet(viewsets.ModelViewSet):
+    queryset = AccionesTemporal.objects.all()
+    serializer_class = AccionesTemporalSerializer
+
+class AreasViewSet(viewsets.ModelViewSet):
+    queryset = Area.objects.all().order_by("idArea")
+    serializer_class = AreasSerializer
+
+class RubrosViewSet(viewsets.ModelViewSet):
+    queryset = Rubro.objects.all().order_by("idRubro")
+    serializer_class = RubrosSerializer
+
+class PeriodosViewSet(viewsets.ModelViewSet):
+    queryset = Periodo.objects.all()
+    serializer_class = PeriodosSerializer

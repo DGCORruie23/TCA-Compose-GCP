@@ -1,4 +1,37 @@
 from django.db import models
+from usuarios.models import Rubro, Area, Periodo
+
+class RegistroTemporal(models.Model):
+    types_estado = [
+        ("1", "En proceso"),
+        ("2", "Atendido"),
+    ]
+
+    idRegistro = models.AutoField(primary_key=True)
+    claveAcuerdo = models.CharField(default="Clave de Acuerdo", max_length=20)
+    fecha_inicio = models.DateField()
+    fecha_termino = models.DateField()
+    rubro = models.ManyToManyField(Rubro, related_name='registroRTemporal')
+    area = models.ManyToManyField(Area, related_name='registroATemporal')
+    estado = models.CharField(max_length=1, choices=types_estado, default="1")
+    fecha_finalizacion = models.DateField(default="1970-01-01")
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    porcentaje_avance = models.IntegerField(default=0)
+    periodo = models.ForeignKey(Periodo, on_delete=models.CASCADE, null=True)
+
+    def __str__(self):
+        return f"Registro Temp: {self.idRegistro}, Clave: {self.claveAcuerdo}"
+
+class AccionesTemporal(models.Model):
+    idAccion = models.AutoField(primary_key=True)
+    idRegistro = models.ManyToManyField(RegistroTemporal, related_name='accionRTemporal')
+    area2 = models.ManyToManyField(Area, related_name='accionA2Temporal')
+    antecedente = models.TextField(blank=True)
+    descripcion = models.TextField()
+
+    def __str__(self):
+        return f"Acción Temp: {self.idAccion}, Desc: {self.descripcion}"
+
 
 class Formulario(models.Model):
     titulo = models.CharField(max_length=255)
@@ -212,3 +245,4 @@ class RespuestaPregunta(models.Model):
 
     def __str__(self):
         return f"Respuesta a {self.pregunta.texto} ({'habilitada' if self.habilitada else 'NO aplica'})"
+

@@ -9,6 +9,12 @@ from .views import (
     SubSeccionViewSet,
     PreguntaViewSet,
     RespuestaFormularioViewSet,
+    RegistroTemporalViewSet,
+    AccionesTemporalViewSet,
+
+    AreasViewSet,
+    RubrosViewSet,
+    PeriodosViewSet,
 )
 
 app_name = 'superv_urls'
@@ -19,6 +25,11 @@ router.register(r'secciones', SeccionViewSet, basename='secciones')
 router.register(r'subsecciones', SubSeccionViewSet, basename='subsecciones')
 router.register(r'preguntas', PreguntaViewSet, basename='preguntas')
 router.register(r'respuestas', RespuestaFormularioViewSet, basename='respuestas')
+router.register(r'registro_temporal', RegistroTemporalViewSet, basename='registro_temporal')
+router.register(r'acciones_temporal', AccionesTemporalViewSet, basename='acciones_temporal')
+router.register(r'areas', AreasViewSet, basename='areas')
+router.register(r'rubros', RubrosViewSet, basename='rubros')
+router.register(r'periodos', PeriodosViewSet, basename='periodos')
 
 urlpatterns = [
     path('clave/', AccessKeyView.as_view(), name='access_key'),

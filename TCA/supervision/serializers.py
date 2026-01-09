@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Formulario, Seccion, SubSeccion, Pregunta
-from .models import RespuestaFormulario, RespuestaPregunta
+from .models import RespuestaFormulario, RespuestaPregunta, RegistroTemporal, AccionesTemporal
+from usuarios.models import Area, Rubro, Periodo
 
 
 class PreguntaSerializer(serializers.ModelSerializer):
@@ -152,3 +153,28 @@ class RespuestaFormularioSerializer(serializers.ModelSerializer):
             RespuestaPregunta.objects.create(respuesta_formulario=instance, **r)
 
         return instance
+
+class RegistroTemporalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RegistroTemporal
+        fields = '__all__'
+
+class AccionesTemporalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AccionesTemporal
+        fields = '__all__'
+
+class AreasSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Area
+        fields = '__all__'
+    
+class RubrosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rubro
+        fields = '__all__'
+
+class PeriodosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Periodo
+        fields = '__all__'
