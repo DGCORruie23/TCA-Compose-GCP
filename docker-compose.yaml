@@ -21,6 +21,7 @@ services:
       - ./TCA/supervision:/src/TCA/supervision
       - ./TCA/tablero_control:/src/TCA/tablero_control
       - ./TCA/panel:/src/TCA/panel
+      - ./TCA/zdata:/src/TCA/zdata
   
   vite:
     profiles: ["dev"]

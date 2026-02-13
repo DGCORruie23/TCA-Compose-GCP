@@ -6,6 +6,8 @@ from .models import (
     Pregunta,
     RespuestaFormulario,
     RespuestaPregunta,
+    RegistroTemporal,
+    AccionesTemporal,
 )
 
 
@@ -79,4 +81,16 @@ class RespuestaPreguntaAdmin(admin.ModelAdmin):
     list_display = ("pregunta", "valor", "comentario", "habilitada")
     list_filter = ("valor", "habilitada")
     search_fields = ("comentario",)
+
+
+## -----------------------------------------------  ##########
+## -----------------------------------------------  ##########
+
+@admin.register(AccionesTemporal)
+class AccionesTemporalAdmin(admin.ModelAdmin):
+    list_display = ("idAccion", "area2", "descripcion", "antecedente")
+
+@admin.register(RegistroTemporal)
+class RegistroTemporalAdmin(admin.ModelAdmin):
+    list_display = ("idRegistro", "claveAcuerdo", "fecha_inicio", "fecha_termino")
 

@@ -159,6 +159,35 @@ class RegistroTemporalSerializer(serializers.ModelSerializer):
         model = RegistroTemporal
         fields = '__all__'
 
+    def create(self, validated_data):
+        last_periodo = Periodo.objects.last()
+        if last_periodo:
+            validated_data['periodo'] = last_periodo
+        return super().create(validated_data)
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        # Nested serialization for details
+        representation['area'] = AreasSerializer(instance.area.all(), many=True).data
+        representation['rubro'] = RubrosSerializer(instance.rubro.all(), many=True).data
+        
+        # Get related action description
+        # Using related_name='accionRTemporal' from AccionesTemporal model
+        acciones = instance.accionRTemporal.all()
+        if acciones.exists():
+             accion = acciones.first()
+             representation['accion_detalle'] = {
+                 'id': accion.idAccion,
+                 'descripcion': accion.descripcion,
+                 'antecedente': accion.antecedente
+             }
+             representation['accion_descripcion'] = accion.descripcion # Keep legacy field
+        else:
+             representation['accion_detalle'] = None
+             representation['accion_descripcion'] = "Sin descripción"
+             
+        return representation
+
 class AccionesTemporalSerializer(serializers.ModelSerializer):
     class Meta:
         model = AccionesTemporal

@@ -15,6 +15,8 @@ from .views import (
     AreasViewSet,
     RubrosViewSet,
     PeriodosViewSet,
+
+    generar_word,
 )
 
 app_name = 'superv_urls'
@@ -38,4 +40,5 @@ urlpatterns = [
     path('instrucciones/', InicioView.as_view(), name='instrucciones'),
     path('reportes/', InicioView.as_view(), name='reportes'),
     path('api/', include(router.urls)),
+    path('descargar-reporte/', generar_word, name='descargar_reporte'),
 ]
