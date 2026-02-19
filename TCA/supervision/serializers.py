@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Formulario, Seccion, SubSeccion, Pregunta
-from .models import RespuestaFormulario, RespuestaPregunta, RegistroTemporal, AccionesTemporal
+from .models import RespuestaFormulario, RespuestaPregunta, RegistroTemporal, AccionesTemporal, ReporteGenerado
 from usuarios.models import Area, Rubro, Periodo
 
 
@@ -206,4 +206,9 @@ class RubrosSerializer(serializers.ModelSerializer):
 class PeriodosSerializer(serializers.ModelSerializer):
     class Meta:
         model = Periodo
+        fields = '__all__'
+
+class ReporteGeneradoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReporteGenerado
         fields = '__all__'

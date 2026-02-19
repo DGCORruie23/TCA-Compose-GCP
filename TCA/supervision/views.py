@@ -4,6 +4,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.conf import settings
 from django.http import FileResponse
+from django.contrib import messages
 
 from django.views.generic import FormView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -19,8 +20,9 @@ from .models import (
     RespuestaFormulario,
     RegistroTemporal,
     AccionesTemporal,
+    ReporteGenerado,
 )
-from usuarios.models import Area, Rubro, Periodo
+from usuarios.models import Area, Rubro, Periodo, Registro, Acciones
 from .serializers import (
     FormularioSerializer,
     SeccionSerializer,
@@ -32,6 +34,7 @@ from .serializers import (
     AreasSerializer,
     RubrosSerializer,
     PeriodosSerializer,
+    ReporteGeneradoSerializer,
 )
 
 from django.db.models import Count
@@ -133,7 +136,12 @@ class PeriodosViewSet(viewsets.ModelViewSet):
     queryset = Periodo.objects.all()
     serializer_class = PeriodosSerializer
 
-def generar_word(request):
+class ReporteGeneradoViewSet(viewsets.ModelViewSet):
+    queryset = ReporteGenerado.objects.all()
+    serializer_class = ReporteGeneradoSerializer
+    
+
+def _construir_documento_word():
     from docxtpl import DocxTemplate
     from docx import Document
     from docx.shared import Pt, RGBColor
@@ -142,19 +150,15 @@ def generar_word(request):
     from docx.oxml import OxmlElement
     from docx.oxml.ns import qn
     from datetime import datetime
-    # import locale # Desactivado temporalmente para evitar problemas de plataforma
 
-    # Para demostración, si no vienen datos en el request, usamos unos por defecto
-    # En producción, estos datos vendrían de la base de datos o de los parámetros POST/GET
-
-    # Obtener los registros con sus relaciones precargadas para evitar duplicación y múltiples consultas
+    # Obtener los registros con sus relaciones precargadas
     registros = (
         RegistroTemporal.objects
         .prefetch_related('accionRTemporal', 'area', 'rubro')
         .all()
     )
 
-    # Conteo de rubros único para la primera tabla
+    # Conteo de rubros único
     conteo_rubros = (
         RegistroTemporal.objects
         .values('rubro__tipo')
@@ -165,15 +169,10 @@ def generar_word(request):
     if registros.exists():
         datosA = []
         for reg in registros:
-            # Agrupar antecedentes y descripciones de todas las acciones relacionadas
             acciones = reg.accionRTemporal.all()
             antecedentes = "\n".join([a.antecedente for a in acciones if a.antecedente])
             descripciones = "\n".join([a.descripcion for a in acciones if a.descripcion])
-            
-            # Agrupar nicknames de áreas
             areas = ", ".join([area.nickname for area in reg.area.all()])
-            
-            # Obtener el primer rubro (o todos si fuera necesario)
             rubro_tipo = reg.rubro.first().tipo if reg.rubro.exists() else "N/A"
 
             datosA.append({
@@ -186,7 +185,6 @@ def generar_word(request):
             })
 
         inicio_f = registros.first().fecha_inicio
-        # Extraer la oficina de la clave de acuerdo (ej: 001/CHIS/01/2025 -> CHIS)
         partes_clave = registros.first().claveAcuerdo.split("/")
         oficina_d = partes_clave[1] if len(partes_clave) > 1 else "COLIMA"
         
@@ -195,7 +193,6 @@ def generar_word(request):
             "oficina": oficina_d
         }
     else:
-        # Fallback para demostración si no hay datos en la DB
         datosA = [
             {"rubro__tipo": "INFO 1", "claveAcuerdo": "001/DEMO/01/2025", "accionRTemporal__antecedente": "Sin antecedentes", "accionRTemporal__descripcion": "Sin descripción", "fecha_termino": "01/01/2025", "area__accionA2Temporal__area2__nickname": "Área Demo",},
         ]
@@ -204,113 +201,49 @@ def generar_word(request):
             "oficina": "DEMO"
         }
 
-    
     ruta_word = os.path.join(settings.BASE_DIR, 'zdata', 'plantilla.docx')
-
-    # Paso 1: Rellenar placeholders simples con docxtpl
     doc = DocxTemplate(ruta_word)
-    
     doc.render(context)
     
-    # Usar un buffer en memoria en lugar de archivos temporales en disco
     temp_stream = io.BytesIO()
     doc.save(temp_stream)
     temp_stream.seek(0)
 
-    # Paso 2: Abrir el documento ya renderizado con python-docx
     document = Document(temp_stream)
-
-    # Buscar una tabla específica (ej. la primera)
     table = document.tables[0]
 
     coloresT1 = {0: "EFE8DE", 1: "FFFFFF"}
     coloresT2 = {0: "AEE0D5", 1: "FFFFFF"}
-    alineacion = { 
-        -1: WD_ALIGN_PARAGRAPH.LEFT, 
-        0: WD_ALIGN_PARAGRAPH.CENTER, 
-        1: WD_ALIGN_PARAGRAPH.RIGHT, 
-        2: WD_ALIGN_PARAGRAPH.JUSTIFY
-    }
+    alineacion = { -1: WD_ALIGN_PARAGRAPH.LEFT, 0: WD_ALIGN_PARAGRAPH.CENTER, 1: WD_ALIGN_PARAGRAPH.RIGHT, 2: WD_ALIGN_PARAGRAPH.JUSTIFY }
 
     def modificar_celda(celda, texto="", text_size=10, bg_color_hex="FFFFFF", text_color_hex="000000", bold = False, italic=False, aliniar = 0):
-
         aliniarV = alineacion[aliniar] if aliniar in alineacion else alineacion[0]
         celda.text = str(texto)
-
-        textColor = RGBColor(
-            int(text_color_hex[0:2],16),
-            int(text_color_hex[2:4],16),
-            int(text_color_hex[4:6],16)
-        )
-
+        textColor = RGBColor(int(text_color_hex[0:2],16), int(text_color_hex[2:4],16), int(text_color_hex[4:6],16))
         celda.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
-
         for paragraph in celda.paragraphs:
             paragraph.alignment = aliniarV
             for run in paragraph.runs:
-                run.font.size = Pt(text_size)  # tamaño en puntos
+                run.font.size = Pt(text_size)
                 run.font.color.rgb = textColor
-                run.font.bold = bold     # opcional: negrita
+                run.font.bold = bold
                 run.font.italic = italic 
-
         tc = celda._tc
         tcPr = tc.get_or_add_tcPr()
         shd = OxmlElement('w:shd')
         shd.set(qn('w:fill'), bg_color_hex)
         tcPr.append(shd)
 
-    # Agregar filas dinámicamente
-    # rubros_data = [
-    #     {"rubro": "INFO 1", "dato": 2},
-    #     {"rubro": "INFO 2", "dato": 3},
-    #     {"rubro": "INFO 3", "dato": 1},
-    #     {"rubro": "INFO 4", "dato": 4},
-    #     {"rubro": "INFO 5", "dato": 0},
-    #     {"rubro": "INFO 6", "dato": 5},
-    #     {"rubro": "INFO 7", "dato": 15},
-    #     {"rubro": "INFO 8", "dato": 1},
-    # ]
-
     for i, row_data in enumerate(conteo_rubros, start=1):
         row_cells = table.add_row().cells
-        modificar_celda(
-            celda=row_cells[0], 
-            texto=row_data["rubro__tipo"], 
-            text_size= 8, 
-            bg_color_hex=coloresT1[i % 2]
-        )
-        modificar_celda(
-            celda=row_cells[1], 
-            texto=row_data["total"], 
-            text_size= 8, 
-            bg_color_hex=coloresT1[i % 2]
-        )
+        modificar_celda(celda=row_cells[0], texto=row_data["rubro__tipo"], text_size= 8, bg_color_hex=coloresT1[i % 2])
+        modificar_celda(celda=row_cells[1], texto=row_data["total"], text_size= 8, bg_color_hex=coloresT1[i % 2])
 
     row_cells = table.add_row().cells
-    modificar_celda(
-        celda=row_cells[0],
-        texto="Total",
-        bg_color_hex="B38E5D",
-        text_color_hex="FFFFFF",
-        bold=True
-    )
-    modificar_celda(
-        celda=row_cells[1],
-        texto=sum(item['total'] for item in conteo_rubros),
-        bg_color_hex="285C4D",
-        text_color_hex="FFFFFF",
-        bold=True,
-    )
-
-    # Debug temporal (remover en producción)
-    # print(registros)
-    # print("\n\n\n")
-    # print(datosA)
-    # print("\n\n\n")
-    # print(RegistroTemporal.objects.count())
+    modificar_celda(celda=row_cells[0], texto="Total", bg_color_hex="B38E5D", text_color_hex="FFFFFF", bold=True)
+    modificar_celda(celda=row_cells[1], texto=sum(item['total'] for item in conteo_rubros), bg_color_hex="285C4D", text_color_hex="FFFFFF", bold=True)
 
     table1 = document.tables[1]
-
     for i, row_data in enumerate(datosA, start=1):
         row_cells = table1.add_row().cells
         modificar_celda(celda=row_cells[0], texto=row_data["rubro__tipo"], bg_color_hex=coloresT2[i % 2] )
@@ -320,16 +253,120 @@ def generar_word(request):
         modificar_celda(celda=row_cells[4], texto=row_data["fecha_termino"], bg_color_hex=coloresT2[i % 2] )
         modificar_celda(celda=row_cells[5], texto=row_data["area__accionA2Temporal__area2__nickname"], bg_color_hex=coloresT2[i % 2] )
 
-    # Guardar el documento final en un buffer para retornarlo como respuesta
     final_stream = io.BytesIO()
     document.save(final_stream)
     final_stream.seek(0)
+    
+    return final_stream, context['oficina']
 
+def generar_word(request):
+    from datetime import datetime
+    final_stream, oficina = _construir_documento_word()
+    
     response = FileResponse(
         final_stream, 
         as_attachment=True, 
-        filename=f"Instrucciones_{context['oficina']}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.docx"
+        filename=f"Instrucciones_{oficina}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.docx"
     )
-    
     return response
+
+def exportar_tabla():
+    """
+    Migra los datos de RegistroTemporal y AccionesTemporal a las tablas reales 
+    (Registro y Acciones) y luego limpia las temporales.
+    """
+    from django.db import transaction
+
+    with transaction.atomic():
+        # 1. Migrar Registros
+        registros_temp = RegistroTemporal.objects.all()
+        mapeo_registros = {} # { id_temporal: objeto_real }
+
+        for reg_temp in registros_temp:
+            # Crear el registro real
+            reg_real = Registro.objects.create(
+                claveAcuerdo=reg_temp.claveAcuerdo,
+                fecha_inicio=reg_temp.fecha_inicio,
+                fecha_termino=reg_temp.fecha_termino,
+                estado=reg_temp.estado,
+                fecha_finalizacion=reg_temp.fecha_finalizacion,
+                porcentaje_avance=reg_temp.porcentaje_avance,
+                periodo=reg_temp.periodo
+            )
+            
+            # Copiar ManyToMany de Rubros y Áreas
+            reg_real.rubro.set(reg_temp.rubro.all())
+            reg_real.area.set(reg_temp.area.all())
+            
+            # Guardar en el mapeo para las acciones
+            mapeo_registros[reg_temp.idRegistro] = reg_real
+
+        # 2. Migrar Acciones
+        acciones_temp = AccionesTemporal.objects.all()
+        for acc_temp in acciones_temp:
+            # Crear la acción real
+            acc_real = Acciones.objects.create(
+                antecedente=acc_temp.antecedente,
+                descripcion=acc_temp.descripcion
+            )
+            
+            # Copiar ManyToMany de Áreas (area2)
+            acc_real.area2.set(acc_temp.area2.all())
+            
+            # Copiar ManyToMany de Registros usando el mapeo
+            registros_reales_vincular = []
+            for r_temp in acc_temp.idRegistro.all():
+                if r_temp.idRegistro in mapeo_registros:
+                    # Usamos el objeto real creado anteriormente
+                    registros_reales_vincular.append(mapeo_registros[r_temp.idRegistro])
+            
+            acc_real.idRegistro.set(registros_reales_vincular)
+
+        # 3. Limpieza de tablas temporales
+        # Primero acciones para evitar conflictos si hubiera FKs restrictivas (aunque aquí son M2M)
+        AccionesTemporal.objects.all().delete()
+        RegistroTemporal.objects.all().delete()
+
+    return len(mapeo_registros)
+
+@action(detail=False, methods=["get", "post"])
+def guardar_exportar(request):
+    from django.core.files.base import ContentFile
+    from datetime import datetime
     
+    try:
+        # 1. Generar el documento Word
+        final_stream, oficina = _construir_documento_word()
+        nombre_archivo = f"Instrucciones_{oficina}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.docx"
+        
+        # 2. Guardar el archivo en el modelo ReporteGenerado
+        reporte = ReporteGenerado()
+        
+        # Calcular clave a partir del primer RegistroTemporal
+        reg_primer = RegistroTemporal.objects.first()
+        if reg_primer:
+            clave_acuerdo = reg_primer.claveAcuerdo
+            # Formato: Primer digito + "00" + resto
+            # Ejemplo: 001/CDMX/02/2026 -> 000/CDMX/02/2026
+            if len(clave_acuerdo) >= 3:
+                reporte.clave = clave_acuerdo[0] + "00" + clave_acuerdo[3:]
+            else:
+                reporte.clave = clave_acuerdo
+        
+        # Asignar el último periodo disponible
+        ultimo_periodo = Periodo.objects.order_by('-id').first()
+        if ultimo_periodo:
+            reporte.periodo = ultimo_periodo
+
+        reporte.archivo.save(nombre_archivo, ContentFile(final_stream.read()))
+        
+        # 3. Migrar los datos de las tablas temporales a las reales y limpiar
+        num_migrados = exportar_tabla()
+        
+        messages.success(request, f"Archivo guardado y {num_migrados} registros migrados con éxito. Tablas temporales limpias.")
+        return redirect('/supervision/')
+    except Exception as e:
+        import traceback
+        print(traceback.format_exc())
+        messages.error(request, f"Ocurrió un error: {str(e)}")
+        return redirect('/supervision/')

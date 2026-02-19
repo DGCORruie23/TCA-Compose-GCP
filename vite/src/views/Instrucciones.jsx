@@ -918,7 +918,8 @@ export default function Instrucciones() {
                                 className="bg-[#8B0000] hover:bg-red-800 text-white font-bold py-2 px-8 rounded-full transition-colors shadow-md"
                                 onClick={() => {
                                     // Final action: Redirect to home
-                                    window.location.href = "/";
+                                    // window.location.href = "/";
+                                    window.location.href = API_URL.replace('/api', '/guardar-reporte/');
                                 }}
                             >
                                 Confirmar

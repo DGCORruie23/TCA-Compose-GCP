@@ -246,3 +246,16 @@ class RespuestaPregunta(models.Model):
     def __str__(self):
         return f"Respuesta a {self.pregunta.texto} ({'habilitada' if self.habilitada else 'NO aplica'})"
 
+
+class ReporteGenerado(models.Model):
+    idReporte = models.AutoField(primary_key=True)
+    clave = models.CharField(default="Clave", max_length=20)
+    archivo = models.FileField(upload_to='words/')
+    fecha_generacion = models.DateTimeField(auto_now_add=True)
+    firmado = models.BooleanField(default=False)
+    archivo_firmado = models.FileField(upload_to='words/firmados/', null=True, blank=True)
+    periodo = models.ForeignKey(Periodo, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return f"Reporte {self.idReporte} - {self.fecha_generacion.strftime('%Y-%m-%d %H:%M')}"
+

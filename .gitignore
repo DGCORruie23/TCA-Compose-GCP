@@ -9,3 +9,4 @@ certbot/www/
 TCA/entorno
 certificados/
 vite/node_modules/
+TCA/zdata/

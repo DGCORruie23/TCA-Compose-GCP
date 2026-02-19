@@ -15,8 +15,10 @@ from .views import (
     AreasViewSet,
     RubrosViewSet,
     PeriodosViewSet,
+    ReporteGeneradoViewSet,
 
     generar_word,
+    guardar_exportar,
 )
 
 app_name = 'superv_urls'
@@ -32,6 +34,7 @@ router.register(r'acciones_temporal', AccionesTemporalViewSet, basename='accione
 router.register(r'areas', AreasViewSet, basename='areas')
 router.register(r'rubros', RubrosViewSet, basename='rubros')
 router.register(r'periodos', PeriodosViewSet, basename='periodos')
+router.register(r'reporte_final', ReporteGeneradoViewSet, basename='reporte_final')
 
 urlpatterns = [
     path('clave/', AccessKeyView.as_view(), name='access_key'),
@@ -41,4 +44,5 @@ urlpatterns = [
     path('reportes/', InicioView.as_view(), name='reportes'),
     path('api/', include(router.urls)),
     path('descargar-reporte/', generar_word, name='descargar_reporte'),
+    path('guardar-reporte/', guardar_exportar, name='guardar_reporte'),
 ]

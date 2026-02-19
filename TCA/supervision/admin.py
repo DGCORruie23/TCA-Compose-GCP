@@ -8,6 +8,7 @@ from .models import (
     RespuestaPregunta,
     RegistroTemporal,
     AccionesTemporal,
+    ReporteGenerado,
 )
 
 
@@ -88,9 +89,13 @@ class RespuestaPreguntaAdmin(admin.ModelAdmin):
 
 @admin.register(AccionesTemporal)
 class AccionesTemporalAdmin(admin.ModelAdmin):
-    list_display = ("idAccion", "area2", "descripcion", "antecedente")
+    list_display = ("idAccion", "descripcion", "antecedente")
 
 @admin.register(RegistroTemporal)
 class RegistroTemporalAdmin(admin.ModelAdmin):
-    list_display = ("idRegistro", "claveAcuerdo", "fecha_inicio", "fecha_termino")
+    list_display = ("idRegistro", "claveAcuerdo", "fecha_inicio", "fecha_termino", "estado")
 
+@admin.register(ReporteGenerado)
+class ReporteGeneradoAdmin(admin.ModelAdmin):
+    list_display = ("idReporte", "clave", "fecha_generacion", "firmado", "periodo")
+    list_filter = ("firmado", "periodo")

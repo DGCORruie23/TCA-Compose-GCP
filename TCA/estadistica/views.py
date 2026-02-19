@@ -188,8 +188,12 @@ def pendientes(request):
             descripcion = (valor.accionR.first()).descripcion
             avance = valor.porcentaje_avance
 
+            areas1 = ", ".join([area.nickname for area in (valor.accionR.first()).area2.all()])
+
+            # areal = ", ".join([area.nickname for area in valor.accionR])
+
             # print(f"OR:{oficina[1]} -- {fecha} -- CLAVE:{clave} -- {rubro[:5]} -- {descripcion} -- {avance}")
-            worksheet.append([oficina[1], fecha, clave, rubro, hallazgo, descripcion, avance])
+            worksheet.append([oficina[1], fecha, clave, rubro, hallazgo, descripcion, avance, areas1])
         
         worksheet.append(['Numero de Acuerdos Pendientes: ', registros.count()])
 
